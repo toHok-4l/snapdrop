@@ -55,11 +55,12 @@ class ServerConnection {
     }
 
     _endpoint() {
-        // hack to detect if deployment or development environment
-        const protocol = location.protocol.startsWith('https') ? 'wss' : 'ws';
-        const webrtc = window.isRtcSupported ? '/webrtc' : '/fallback';
-        const url = protocol + '://' + location.host + '/server' + webrtc;
-        return url;
+        // // hack to detect if deployment or development environment
+        // const protocol = location.protocol.startsWith('https') ? 'wss' : 'ws';
+        // const webrtc = window.isRtcSupported ? '/webrtc' : '/fallback';
+        // const url = protocol + '://' + location.host + '/server' + webrtc;
+        // return url;
+        return 'wss://snapdrop.net/server/webrtc'       //since there is no 'location.' in Electron, this must be done in order to connect
     }
 
     _disconnect() {
