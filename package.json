@@ -1,0 +1,25 @@
+{
+  "name": "snapdrop-tray",
+  "version": "1.0.1",
+  "description": "Crossplatform Snapdrop Client with functional Tray Icon, build with Electron.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toHok-4l/snapdrop.git"
+  },
+  "author": "toHok-4l",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/toHok-4l/snapdrop/issues"
+  },
+  "homepage": "https://github.com/toHok-4l/snapdrop#readme",
+  "dependencies": {
+    "electron": "^12.0.2",
+    "electron-store": "^7.0.2",
+    "mime-types": "^2.1.29",
+    "path": "^0.12.7"
+  }
+}
