@@ -1,3 +1,5 @@
+const {ipcRenderer} = require('electron');
+
 window.URL = window.URL || window.webkitURL;
 window.isRtcSupported = !!(window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection);
 
@@ -8,6 +10,7 @@ class ServerConnection {
         Events.on('beforeunload', e => this._disconnect());
         Events.on('pagehide', e => this._disconnect());
         document.addEventListener('visibilitychange', e => this._onVisibilityChange());
+        ipcRenderer.on('disconnect', () => this._disconnect());     //so the old device disapears
     }
 
     _connect() {
@@ -368,6 +371,20 @@ class PeersManager {
         Events.on('files-selected', e => this._onFilesSelected(e.detail));
         Events.on('send-text', e => this._onSendText(e.detail));
         Events.on('peer-left', e => this._onPeerLeft(e.detail));
+        ipcRenderer.on('sendFiles', (event, e) => {     //called by main.js
+            var message = {to: e.to, files: []};        //build message object
+            for (let i = 0; i < e.data.length; i++){    //loop though enterys
+                message.files[i] = new File(
+                    [e.data[i]],                        //Buffer read by fs.readFiles
+                    e.name[i],                          //Filename 
+                    {type: e.type[i]}                   //MIME-type, since FileExtention isnt enough for iOS 
+                );
+            };
+            this._onFilesSelected(message); //call to send files like clicking on peer
+        });
+        ipcRenderer.on('sendText', (event, message) => {   //called by main.js
+            this._onSendText(message);      //call to send text like right-clicking on peer
+        });
     }
 
     _onMessage(message) {
