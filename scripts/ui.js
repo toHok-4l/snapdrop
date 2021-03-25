@@ -437,7 +437,7 @@ class Notifications {
     _notify(message, body, closeTimeout = 20000) {
         const config = {
             body: body,
-            icon: '/images/logo_transparent_128x128.png',
+            icon: './images/logo_transparent_128x128.png',   //added '.' before '/' since the image couldn't load otherwise
         }
         let notification;
         try {
@@ -555,7 +555,7 @@ const snapdrop = new Snapdrop();
 
 
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/service-worker.js')
+    navigator.serviceWorker.register('./service-worker.js')//added '.' before '/' because the script can't be found in elecetron otherwise
         .then(serviceWorker => {
             console.log('Service Worker registered');
             window.serviceWorker = serviceWorker
