@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 const $ = query => document.getElementById(query);
 const $$ = query => document.body.querySelector(query);
 const isURL = text => /^((https?:\/\/|www)[^\s]+)/g.test(text.toLowerCase());
@@ -5,12 +7,27 @@ window.isDownloadSupported = (typeof document.createElement('a').download !== 'u
 window.isProductionEnvironment = !window.location.host.startsWith('localhost');
 window.iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
+ipcRenderer.on('get-url', (event, data) => { //get blob data when requested
+
+    async function getUrl(){
+        var file = new File([await (await fetch(data.url)).blob()], data.name, { type: data.type}); //await the blob, then built a file 
+        var fileReader = new FileReader();      //create a FileReader to puch the blob into an array
+        fileReader.onload = function() {        //on load definition
+            fs.writeFileSync(data.path + data.name, Buffer.from(new Uint8Array(this.result)));//save to given Path
+        };
+        fileReader.readAsArrayBuffer(file);
+    }
+    getUrl();//call the function  
+    document.getElementById('ignore').click();  //dismiss the dialog, so another can pop up
+});
+
 // set display name
 Events.on('display-name', e => {
     const me = e.detail.message;
     const $displayName = $('displayName')
     $displayName.textContent = 'You are known as ' + me.displayName;
     $displayName.title = me.deviceName;
+    ipcRenderer.send('sendName', me.displayName);   //send name to main.js
 });
 
 class PeersUI {
@@ -28,6 +45,7 @@ class PeersUI {
         const peerUI = new PeerUI(peer);
         $$('x-peers').appendChild(peerUI.$el);
         setTimeout(e => window.animateBackground(false), 1750); // Stop animation
+        ipcRenderer.send('peerJoined', peer);       //send peer to main.js
     }
 
     _onPeers(peers) {
@@ -39,6 +57,7 @@ class PeersUI {
         const $peer = $(peerId);
         if (!$peer) return;
         $peer.remove();
+        ipcRenderer.send('peerLeft', peerId);//send peerId to main.js
     }
 
     _onFileProgress(progress) {
@@ -50,6 +69,7 @@ class PeersUI {
 
     _clearPeers() {
         const $peers = $$('x-peers').innerHTML = '';
+        ipcRenderer.send('clearPeers');//notify main.js
     }
 
     _onPaste(e) {
@@ -261,6 +281,7 @@ class ReceiveDialog extends Dialog {
         const url = URL.createObjectURL(file.blob);
         $a.href = url;
         $a.download = file.name;
+        ipcRenderer.send('file-recived', {name: file.name, url: url, type: file.mime}); //transfer file data for autodownload
 
         if(this._autoDownload()){
             $a.click()
@@ -437,8 +458,9 @@ class Notifications {
 
     _messageNotification(message) {
         if (isURL(message)) {
-            const notification = this._notify(message, 'Click to open link');
-            this._bind(notification, e => window.open(message, '_blank', null, true));
+            const notification = this._notify(message, 'Click to open/copy link');      //added '/copy'
+            //this._bind(notification, e => window.open(message, '_blank', null, true));
+            this._bind(notification, e => ipcRenderer.send('recieved-URL', message)); // binds to actuall open
         } else {
             const notification = this._notify(message, 'Click to copy text');
             this._bind(notification, e => this._copyText(message, notification));
