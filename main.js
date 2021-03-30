@@ -198,7 +198,7 @@ function SendTextTo (id){//Text
     win.webContents.send('sendText', {text: textGiven, to: id}); //triggers network.js 
     txt.destroy()                 //destroy the window
   });
-  ipcMain.on('textInputCancel', txt.destroy()); //triggerd in TextDialog //TEST
+  ipcMain.on('textInputCancel', () => {txt.destroy()}); //triggerd in TextDialog.html
 };
 
 function SendFilesTo (id, name){  //Files
@@ -221,7 +221,7 @@ function SendFilesTo (id, name){  //Files
 
   win.webContents.send('sendFiles', { //triggers network.js
     to: id,
-    files: [], //why??
+    files: [],
     data: dataSend,
     name: nameSend,
     type: typeSend 
