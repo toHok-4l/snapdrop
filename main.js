@@ -185,7 +185,7 @@ function SendTextTo (id){//Text
     width: 400,
     height: 210,
     frame: false,
-    icon: path.join(__dirname, '/../images/logo_transparent_white_512x512.png'), //set icon in Taskbar
+    icon: path.join(__dirname, '/../images/logo_transparent_512x512.png'), //set icon in Taskbar
     transparent: true,                //doesnt work for linux, background will be square, not round
     backgroundColor: '#00121212',     //since fully transparent isnt possible on linux (#00..) is shows up black --Find a way to determin client OS
     webPreferences: {
