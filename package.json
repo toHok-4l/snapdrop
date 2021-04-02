@@ -4,7 +4,10 @@
   "description": "Crossplatform Snapdrop Client with functional Tray Icon, build with Electron.",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "distlin": "electron-builder --linux",
+    "distwin": "electron-builder --win"
   },
   "repository": {
     "type": "git",
@@ -18,9 +21,45 @@
   "homepage": "https://github.com/toHok-4l/snapdrop#readme",
   "dependencies": {
     "auto-launch": "^5.0.5",
-    "electron": "^12.0.2",
     "electron-store": "^7.0.2",
     "mime-types": "^2.1.29",
     "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "electron": "^12.0.2",
+    "electron-builder": "^22.10.5"
+  },
+  "build": {
+    "appId": "com.electron.snapdrop-tray",
+    "productName": "SnapdropTray",
+    "linux": {
+      "target": [
+        "deb"
+      ],
+      "maintainer": "toHok_4l",
+      "category": "Office",
+      "icon": "../images/logo_transparent_512x512.png"
+    },
+    "deb": {
+      "packageCategory": "Office",
+      "depends": [
+        "libappindicator1",
+        "libnotify4"
+      ]
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "../images/logo_transparent_512x512.png"
+    },
+    "extraFiles": [
+      {
+        "from": "./images",
+        "to": "./resources/images"
+      },
+      {
+        "from": "./images",
+        "to": "./images"
+      }
+    ]
   }
 }
