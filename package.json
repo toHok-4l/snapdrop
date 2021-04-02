@@ -1,6 +1,6 @@
 {
   "name": "snapdrop-tray",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Crossplatform Snapdrop Client with functional Tray Icon, build with Electron.",
   "main": "main.js",
   "scripts": {
